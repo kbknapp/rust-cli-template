@@ -19,7 +19,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           pdrofile: minimal
-          toolchain: ${{ matrix.rust }}
+          toolchain: {{ '${{ matrix.rust }}' }}
           override: true
 
       - name: Install cc

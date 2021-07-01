@@ -6,7 +6,7 @@ on:
 name: Nightly Release
 
 env:
-  RELEASE_BIN: {{project-name}}
+  RELEASE_BIN: {{crate_name}}
   RELEASE_ADDS: >-
     LICENSE-APACHE
     LICENSE-MIT
@@ -50,15 +50,15 @@ jobs:
         run: mkdir -p artifacts/
 
       - name: Copy all artifacts into dir
-        run: cp target/x86_64-unknown-linux-musl/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_ADDS }} artifacts/
+        run: cp {{ 'target/x86_64-unknown-linux-musl/release/${{ env.RELEASE_BIN }} ${{ env.RELEASE_ADDS }} artifacts/' }}
 
       - uses: benjlevesque/short-sha@v1.2
         id: short-sha
 
       - name: Create archive for Linux
-        run: cd artifacts/ && tar czf ../${{ env.RELEASE_BIN }}-${{ env.SHA }}-x86_64-linux-musl.tar.gz ./*
+        run: cd artifacts/ && tar czf {{ '../${{ env.RELEASE_BIN }}-${{ env.SHA }}-x86_64-linux-musl.tar.gz ./*' }}
         env:
-          SHA: ${{ steps.short-sha.outputs.sha }}
+          SHA: {{ '${{ steps.short-sha.outputs.sha }}' }}
 
       - name: Remove previous Nightly Release
         uses: dev-drprasad/delete-tag-and-release@v0.2.0
@@ -67,18 +67,18 @@ jobs:
           tag_name: nightly
           repo: kbknapp/{{project-name}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: {{ '${{ secrets.GITHUB_TOKEN }}' }}
 
       - name: Create Nightly Release
         uses: softprops/action-gh-release@v1
         with:
-          name: {{project-name}} Nightly (${{ env.SHA }})
+          name: {{project-name}} Nightly {{ '(${{ env.SHA }})' }}
           tag_name: nightly
           prerelease: true
           body_path: nightly-CHANGELOG.md
           files: |
-            ${{ env.RELEASE_BIN }}-${{ env.SHA }}-x86_64-linux-musl.tar.gz
+            {{ '${{ env.RELEASE_BIN }}-${{ env.SHA }}-x86_64-linux-musl.tar.gz' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: {{ '${{ secrets.GITHUB_TOKEN }}' }}
           GITHUB_REPOSITORY: kbknapp/{{project-name}}
-          SHA: ${{ steps.short-sha.outputs.sha }}
+          SHA: {{ '${{ steps.short-sha.outputs.sha }}' }}
